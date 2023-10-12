@@ -1,10 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+//firebase
+import { firebaseConfig } from './config/Config';
+import { initializeApp } from 'firebase/app';
 
 export default function App() {
+  const FBapp = initializeApp( firebaseConfig )
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Text>Hello Winny!</Text>
       <StatusBar style="auto" />
     </View>
   );
