@@ -3,37 +3,45 @@ import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from '../contexts/AuthContext'
 import { useNavigation } from '@react-navigation/native'
 
+import { ErrorMessage } from '../components/ErrorMessage'
+
 export function Signup( props ) {
   const[email,setEmail] = useState('')
   const[password,setPassword] = useState('')
 
-  const[ validEmail, setValidEmail ] = useState(false)
-  const[ validPassword, setValidPassword ] = useState(false)
+  const[validEmail, setValidEmail ] = useState(false)
+  const[validPassword, setValidPassword] = useState(false)
+
+  const[ error, setError ] = useState()
 
   const navigation = useNavigation()
-  const auth = useContext(AuthContext)
+  const Auth = useContext(AuthContext)
 
-  //check the value of email
+  useEffect( () => {
+    if( Auth.currentUser ) {
+      navigation.reset( { index: 0, routes: [ {name: "Home"} ] })
+    }
+  })
+
+  // check the value of email
   useEffect( () => {
     if( email.indexOf('@') > 0 ) {
-    setValidEmail( true )
+      setValidEmail( true )
     }
     else {
       setValidEmail( false )
-      //code an alert here for the user 'please enter a valid email'
     }
-    }, [email])
-    
-    //check the value of password
-    useEffect( () => {
-    if ( password.length >= 8 ) {
-      setValidPassword(true)
+  }, [email])
+
+  // check the value of password
+  useEffect( () => {
+    if( password.length >= 8 ) {
+      setValidPassword( true )
     }
     else {
-      setValidPassword(false)
-      //code an alert here for the user 'please enter 8 digits or more'
+      setValidPassword( false )
     }
-    }, [password])
+  }, [password])
 
   const submitHandler = () => {
     props.handler( email, password )
@@ -41,14 +49,18 @@ export function Signup( props ) {
       // sign up successful
     })
     .catch( (error) => {
-      console.log( error )
+      console.log( error.code )
+      setError( error.code)
     } )
+    // reset the fields
+    setEmail('')
+    setPassword('')
   }
 
   return(
     <View style={ styles.container }>
       <View style={ styles.form }>
-        <Text style={ styles.title }>Sign up for an account</Text>
+        <Text style={ styles.title }>Register for an account</Text>
         <Text>Email</Text>
         <TextInput 
           style={styles.input} 
@@ -64,22 +76,17 @@ export function Signup( props ) {
           value={password}
           onChangeText={(val) => setPassword(val)}
         />
-        <Pressable
-        //if the email/password are valid then use styles.button, otherwise use styles.disabledbutton
-        style={ (validEmail && validPassword) ? styles.button : styles.disabledButton }
-        onPress={() => submitHandler() }
-        //if valid email/password is true, then set disabled to false otherwise set disabled to true
-        disabled={(validEmail && validPassword) ? false : true }
+        <Pressable 
+          style={ (validEmail && validPassword) ? styles.button : styles.disabledButton} 
+          onPress={() => submitHandler()}
+          disabled={ (validEmail && validPassword) ? false : true }
         >
-        <Text style={ styles.button.text }>Sign up</Text>
+          <Text style={ styles.button.text }>Sign up</Text>
+        </Pressable>
+        <Pressable style={styles.authlink} onPress={() => navigation.navigate("Sign in")}>
+          <Text style={styles.authlink.text}>Go to sign in</Text>
+        </Pressable>
         
-        </Pressable>
-        <Pressable
-        style={styles.authLink}
-        onPress={() => navigation.navigate("Sign in")}
-        >
-        <Text style={styles.authLink.text}>Already have an account? Login</Text>
-        </Pressable>
       </View>
     </View>
   )
@@ -116,7 +123,6 @@ const styles = StyleSheet.create({
       textAlign: 'center',
     }
   },
-
   disabledButton: {
     backgroundColor: '#666666',
     padding: 5,
@@ -125,11 +131,10 @@ const styles = StyleSheet.create({
       textAlign: 'center',
     }
   },
-
-  authLink: {
+  authlink: {
     marginTop: 10,
     text: {
-      textAlign: 'center'
+      textAlign: "center"
     }
   }
 })
