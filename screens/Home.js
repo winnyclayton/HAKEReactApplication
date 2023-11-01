@@ -8,6 +8,7 @@ import { useContext, useState, useEffect } from 'react'
 
 import { Data } from './Data'
 import { Profile } from './Profile'
+import { Upload } from './Upload'
 
 const Tab = createBottomTabNavigator()
 
@@ -26,6 +27,12 @@ export function Home( props ) {
     }
   })
 
+  const UploadOptions = {
+    tabBarLabel: "Upload",
+    tabBarIcon: ({ color }) => <IonIcons name="add-outline" color={color} size={20} />,
+    title: "Upload Portal"
+    }
+
   const DataOptions = {
     tabBarLabel: "Home",
     tabBarIcon: ({ color }) => <IonIcons name="home" color={color} size={20} />,
@@ -40,6 +47,7 @@ export function Home( props ) {
 
   return (
     <Tab.Navigator initialRouteName="Data">
+      <Tab.Screen name="Upload" component={Upload} options={UploadOptions} />
       <Tab.Screen name="Data" component={Data} options={ DataOptions } />
       <Tab.Screen name="Profile" component={Profile} options={ProfileOptions} />
     </Tab.Navigator>
