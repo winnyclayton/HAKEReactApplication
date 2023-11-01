@@ -54,7 +54,7 @@ export function Data(props) {
 
   return (
     <View style={styles.container}>
-      <Text>Data</Text>
+      <Text>Your artworks</Text>
       <FlatList
         data={data}
         keyExtractor={(item) => item.id}
