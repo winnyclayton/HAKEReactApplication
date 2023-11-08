@@ -1,43 +1,58 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native'
-import { useContext, useState, useEffect } from 'react'
-import { signOut } from 'firebase/auth'
+import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
+import { useContext, useState, useEffect } from 'react';
+import { signOut, deleteUser } from 'firebase/auth'; 
 
-import { AuthContext } from '../contexts/AuthContext'
+import { AuthContext } from '../contexts/AuthContext';
 
-export function Profile( props ) {
-  const [user,setUser] = useState()
+export function Profile(props) {
+  const [user, setUser] = useState();
 
-  const Auth = useContext( AuthContext )
+  const Auth = useContext(AuthContext);
 
-  useEffect( () => {
-    if( Auth.currentUser ) {
-      setUser( Auth.currentUser )
+  useEffect(() => {
+    if (Auth.currentUser) {
+      setUser(Auth.currentUser);
     }
-  }, [Auth])
+  }, [Auth]);
 
-  if( !user ) {
-    return(
-      <View style={ styles.container }>
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteUser(user);
+      console.log('Account deleted successfully');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    }
+  };
+
+  if (!user) {
+    return (
+      <View style={[styles.container, { backgroundColor: '#FDF9EE' }]}>
         <Text>Getting user data...</Text>
       </View>
-    )
-  }
-  else {
-    return(
-      <View style={ styles.container }>
-        <Text>Hello {user.email}</Text>
-        <Pressable 
-          style={styles.button} 
-          onPress={ () => {
-            signOut( Auth ).then(
-              // the user is signed out
-            )
-          }
-        }>
-          <Text style={ styles.button.text }>Sign out</Text>
+    );
+  } else {
+    return (
+      <View style={[styles.container, { backgroundColor: '#FDF9EE' }]}>
+        <Text style={styles.greetingText}>Hello {user.email}</Text>
+        <Pressable
+          style={styles.signoutButton}
+          onPress={() => {
+            signOut(Auth).then(() => {
+              //user signed out
+              console.log('User signed out');
+            });
+          }}
+        >
+          <Text style={styles.buttonText}>Sign out</Text>
+        </Pressable>
+        <Pressable
+          style={styles.deleteaccButton}
+          onPress={handleDeleteAccount}
+        >
+          <Text style={styles.buttonText}>Delete account</Text>
         </Pressable>
       </View>
-    )
+    );
   }
 }
 
@@ -45,14 +60,25 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
   },
-  button: {
-    marginVertical: 15,
+  signoutButton: {
+    marginVertical: 5,
     padding: 8,
-    backgroundColor: "#333333",
+    backgroundColor: 'grey',
     borderRadius: 6,
-    text: {
-      color: "white",
-      textAlign: "center",
-    }
-  }
-})
+  },
+  deleteaccButton: {
+    marginVertical: 5,
+    padding: 8,
+    backgroundColor: 'red',
+    borderRadius: 6,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+  },
+  greetingText: {
+    textAlign: 'center',
+    marginVertical: 20,
+  },
+});
+
