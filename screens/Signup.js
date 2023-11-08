@@ -1,138 +1,113 @@
-import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native'
-import { useState, useEffect, useContext } from 'react'
-import { AuthContext } from '../contexts/AuthContext'
-import { useNavigation } from '@react-navigation/native'
-import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
-import { db } from '../config/Config';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { AuthContext } from '../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
-import { ErrorMessage } from '../components/ErrorMessage'
+export function Signup(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-export function Signup( props ) {
-  const[email,setEmail] = useState('')
-  const[password,setPassword] = useState('')
+  const [validEmail, setValidEmail] = useState(false);
+  const [validPassword, setValidPassword] = useState(false);
 
-  const[validEmail, setValidEmail ] = useState(false)
-  const[validPassword, setValidPassword] = useState(false)
+  const Auth = useContext(AuthContext);
+  const navigation = useNavigation();
 
-  const[ error, setError ] = useState()
+  useEffect(() => {
+    if (email.indexOf('@') > 0) {
+      setValidEmail(true);
+    } else {
+      setValidEmail(false);
+    }
+  }, [email]);
 
-  const navigation = useNavigation()
-  const Auth = useContext(AuthContext)
+  useEffect(() => {
+    if (password.length >= 8) {
+      setValidPassword(true);
+    } else {
+      setValidPassword(false);
+    }
+  }, [password]);
 
   useEffect(() => {
     if (Auth.currentUser) {
-      //create an artist document with the User ID as the document ID
-      const artistDocRef = doc(db, 'artists', Auth.currentUser.uid);
-      console.log('User ID:', Auth.currentUser.uid); // Log the User ID
-
-      //check if the artist document already exists
-      getDoc(artistDocRef)
-        .then((artistDocSnapshot) => {
-          if (!artistDocSnapshot.exists()) {
-            //if it doesnt exist, create the artist document
-            addDoc(artistDocRef, { name: Auth.currentUser.displayName })
-              .then(() => {
-                console.log('Artist document created');
-              })
-              .catch((error) => {
-                console.error('Error creating artist document:', error);
-              });
-          }
-        })
-        .catch((error) => {
-          console.error('Error checking artist document:', error);
-        });
-
-      //redirect to home screen
       navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     }
-  }, [Auth.currentUser]);
-
-  // check the value of email
-  useEffect( () => {
-    if( email.indexOf('@') > 0 ) {
-      setValidEmail( true )
-    }
-    else {
-      setValidEmail( false )
-    }
-  }, [email])
-
-  // check the value of password
-  useEffect( () => {
-    if( password.length >= 8 ) {
-      setValidPassword( true )
-    }
-    else {
-      setValidPassword( false )
-    }
-  }, [password])
+  }, [Auth.currentUser, navigation]);
 
   const submitHandler = () => {
-    props.handler( email, password )
-    .then( ( user ) => {
-      // sign up successful
-    })
-    .catch( (error) => {
-      console.log( error.code )
-      setError( error.code)
-    } )
-    // reset the fields
-    setEmail('')
-    setPassword('')
-  }
+    props.handler(email, password)
+      .then((user) => {
+        //sign up successful
+      })
+      .catch((error) => {
+        console.log(error.code);
+      });
+    //reset the fields
+    setEmail('');
+    setPassword('');
+  };
 
-  return(
-    <View style={ styles.container }>
-      <View style={ styles.form }>
-        <Text style={ styles.title }>Register for an account</Text>
-        <Text>Email</Text>
-        <TextInput 
-          style={styles.input} 
+  return (
+    <View style={styles.container}>
+      <View style={styles.form}>
+        <Text style={styles.title}>Register for an account</Text>
+        <Text style={styles.emailText}>Email</Text>
+        <TextInput
+          style={styles.input}
           placeholder="you@example.com"
           value={email}
           onChangeText={(val) => setEmail(val)}
         />
-        <Text>Password</Text>
-        <TextInput 
-          style={styles.input} 
+        <Text style={styles.passwordText}>Password</Text>
+        <TextInput
+          style={styles.input}
           placeholder="minimum 8 characters"
           secureTextEntry={true}
           value={password}
           onChangeText={(val) => setPassword(val)}
         />
-        <Pressable 
-          style={ (validEmail && validPassword) ? styles.button : styles.disabledButton} 
+        <Pressable
+          style={validEmail && validPassword ? styles.button : styles.disabledButton}
           onPress={() => submitHandler()}
-          disabled={ (validEmail && validPassword) ? false : true }
+          disabled={!(validEmail && validPassword)}
         >
-          <Text style={ styles.button.text }>Sign up</Text>
+          <Text style={styles.buttonText}>Sign up</Text>
         </Pressable>
-        <Pressable style={styles.authlink} onPress={() => navigation.navigate("Sign in")}>
-          <Text style={styles.authlink.text}>Go to sign in</Text>
+        <Pressable style={styles.authlink} onPress={() => navigation.navigate('Sign in')}>
+          <Text style={styles.authlinkText}>Go to sign in</Text>
         </Pressable>
-        
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FDF9EE', 
     alignItems: 'center',
-    justifyContent: 'start',
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     marginVertical: 10,
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  emailText: {
+    color: 'white',
+    paddingBottom: 5,
+  },
+  passwordText: {
+    color: 'white',
+    paddingBottom: 5,
   },
   form: {
-    marginHorizontal: 10,
-    backgroundColor: '#cccccc',
-    marginTop: 30,
-    padding: 5,
+    backgroundColor: '#396C4D', 
+    padding: 30,
+    borderRadius: 10, 
   },
   input: {
     backgroundColor: '#eeeeee',
@@ -141,25 +116,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: '#333333',
+    backgroundColor: '#779E41',
     padding: 5,
-    text: {
-      color: '#eeeeee',
-      textAlign: 'center',
-    }
+  },
+  buttonText: {
+    color: '#ffffff',
+    textAlign: 'center',
   },
   disabledButton: {
-    backgroundColor: '#666666',
+    backgroundColor: '#E5EDD5',
     padding: 5,
-    text: {
-      color: '#eeeeee',
-      textAlign: 'center',
-    }
   },
   authlink: {
     marginTop: 10,
-    text: {
-      textAlign: "center"
-    }
-  }
-})
+  },
+  authlinkText: {
+    textAlign: 'center',
+    color: 'white',
+    textDecorationLine: 'underline',
+  },
+});

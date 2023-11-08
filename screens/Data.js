@@ -20,6 +20,23 @@ export function Data(props) {
   const [user, setUser] = useState(null);
 
 
+//function to delete an item
+const deleteItem = async (itemId) => {
+  try {
+    const collectionRef = collection(db, 'artists', user.uid, 'artworkList');
+    const docRef = doc(collectionRef, itemId);
+
+    //remove the item from the Firebase Firestore collection
+    await deleteDoc(docRef);
+
+    //update the state to remove the deleted item
+    setData((prevData) => prevData.filter((item) => item.id !== itemId));
+  } catch (error) {
+    console.error('Error deleting item:', error);
+  }
+};
+
+  
   useEffect(() => {
     if (Auth.currentUser) {
       setUser(Auth.currentUser);
@@ -73,6 +90,7 @@ export function Data(props) {
               </Pressable>
               <Pressable
                 style={[styles.button, { backgroundColor: '#396C4D', width: 100, borderColor: 'black', borderWidth: 0.5 }]}
+                onPress={() => deleteItem(item.id)} // call deleteItem function when the button is pressed
               >
                 <Text style={styles.buttonText}>Delete</Text>
               </Pressable>
