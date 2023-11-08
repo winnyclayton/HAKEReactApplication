@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Image, FlatList, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet, ScrollView, Pressable, Modal, TextInput } from 'react-native';
 import { AuthContext } from '../contexts/AuthContext';
 import { DbContext } from '../contexts/DbContext';
 import {
@@ -19,6 +19,15 @@ export function Data(props) {
   const [data, setData] = useState([]);
   const [user, setUser] = useState(null);
 
+  //state variables for the form fields
+  const [artist, setArtist] = useState(''); //init with an empty string
+  const [materials, setMaterials] = useState('');
+  const [title, setTitle] = useState('');
+  const [year, setYear] = useState('');
+  const [price, setPrice] = useState('');
+
+  const [editModalVisible, setEditModalVisible] = useState(false); //state to control the edit modal visibility
+  const [selectedItem, setSelectedItem] = useState(null);
 
 //function to delete an item
 const deleteItem = async (itemId) => {
@@ -85,6 +94,10 @@ const deleteItem = async (itemId) => {
             <View style={styles.buttonContainer}>
               <Pressable
                 style={[styles.button, { backgroundColor: '#DAF6B2', width: 100, borderColor: 'black', borderWidth: 0.5 }]}
+                onPress={() => {
+                  setSelectedItem(item); //set the selected item for editing
+                  setEditModalVisible(true); //open the edit modal
+                }}
               >
                 <Text style={{ color: 'black' }}>Edit</Text>
               </Pressable>
@@ -98,6 +111,82 @@ const deleteItem = async (itemId) => {
           </View>
         )}
       />
+
+ {/* Edit Modal */}
+ <Modal
+  animationType="slide"
+  transparent={true}
+  visible={editModalVisible}
+>
+  <View style={styles.modalContainer}>
+    <View style={[styles.modalContent, { backgroundColor: '#FDF9EE', borderWidth: 1, borderColor: 'black' }]}>
+      <Text style={styles.editItemText}>Edit Item</Text>
+      <View style={styles.formContainer}>
+        <Text>Artist:</Text>
+        <TextInput
+          style={styles.inputField}
+          onChangeText={(text) => setArtist(text)}
+          value={selectedItem ? selectedItem.artist : artist}
+        />
+        <Text>Title:</Text>
+        <TextInput
+          style={styles.inputField}
+          onChangeText={(text) => setTitle(text)}
+          value={selectedItem ? selectedItem.title : title}
+        />
+        <Text>Materials:</Text>
+        <TextInput
+          style={styles.inputField}
+          onChangeText={(text) => setMaterials(text)}
+          value={selectedItem ? selectedItem.materials : materials}
+        />
+        <Text>Year:</Text>
+        <TextInput
+          style={styles.inputField}
+          onChangeText={(text) => setYear(text)}
+          value={selectedItem ? selectedItem.year : year}
+        />
+        <Text>Price:</Text>
+        <TextInput
+          style={styles.inputField}
+          onChangeText={(text) => setPrice(text)}
+          value={selectedItem ? selectedItem.price : price}
+        />
+      </View>
+      <View style={styles.imageNameContainer}>
+        <Text style={styles.imageNameText}>Image Name: image2045.jpeg</Text>
+      </View>
+      <View style={styles.buttonGroup}>
+        <Pressable
+          style={styles.changeImageButton}
+          onPress={() => setEditModalVisible(false)}
+        >
+          <Text style={styles.changeImageButtonText}>Change Image</Text>
+        </Pressable>
+        <Pressable
+          style={styles.deleteImageButton}
+          onPress={() => setEditModalVisible(false)}
+        >
+          <Text style={styles.deleteImageButtonText}>Delete Image</Text>
+        </Pressable>
+      </View>
+      <View style={styles.buttonGroup}>
+        <Pressable
+          style={styles.saveChangesButton}
+          onPress={() => setEditModalVisible(false)}
+        >
+          <Text style={styles.saveChangesButtonText}>Save Changes</Text>
+        </Pressable>
+        <Pressable
+          style={styles.closeButton}
+          onPress={() => setEditModalVisible(false)}
+        >
+          <Text style={styles.closeButtonText}>Close</Text>
+        </Pressable>
+      </View>
+    </View>
+  </View>
+</Modal>
     </ScrollView>
   );
 }
@@ -140,5 +229,48 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+    alignItems: 'left',
+  },
+  editItemText: {
+    fontSize: 25,
+    textAlign: 'center'
+  },
+  closeButton: {
+    padding: 10,
+    backgroundColor: 'gray',
+    borderRadius: 6,
+    marginTop: 10,
+  },
+  saveChangesButton: {
+    padding: 10,
+    backgroundColor: 'gray',
+    borderRadius: 6,
+    marginTop: 10,
+  },
+  changeImageButton: {
+    padding: 10,
+    backgroundColor: 'gray',
+    borderRadius: 6,
+    marginTop: 10,
+  },
+  deleteImageButton: {
+    padding: 10,
+    backgroundColor: 'gray',
+    borderRadius: 6,
+    marginTop: 10,
+  },
+  closeButtonText: {
+    color: 'white',
   },
 });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Image } from 'react-native';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 
@@ -50,6 +50,13 @@ export function Signup(props) {
 
   return (
     <View style={styles.container}>
+
+<Image
+  source={require('../assets/HAKElogo.png')} 
+  style={styles.logo}
+/>
+
+
       <View style={styles.form}>
         <Text style={styles.title}>Register for an account</Text>
         <Text style={styles.emailText}>Email</Text>
@@ -85,7 +92,7 @@ export function Signup(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9EE', 
+    backgroundColor: '#396C4D', 
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -134,5 +141,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
     textDecorationLine: 'underline',
+  },
+  logo: {
+    width: 100, //adjust the width as needed
+    marginBottom: 20, //margin between the logo and the form
   },
 });

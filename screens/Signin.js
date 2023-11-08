@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Pressable, Image } from 'react-native';
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigation } from '@react-navigation/native';
@@ -47,6 +47,12 @@ export function Signin(props) {
 
   return (
     <View style={styles.container}>
+
+<Image
+  source={require('../assets/HAKElogo.png')} 
+  style={styles.logo}
+/>
+
       <View style={styles.form}>
         <Text style={styles.title}>Sign in to your account</Text>
         <Text style={styles.emailText}>Email</Text>
@@ -87,7 +93,7 @@ export function Signin(props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9EE', // background colour of the screen
+    backgroundColor: '#396C4D', // background colour of the screen
     alignItems: 'center',
     justifyContent: 'center', // Ccenter the content vertically
   },
@@ -141,4 +147,9 @@ const styles = StyleSheet.create({
       textDecorationLine: 'underline',
     },
   },
+  logo: {
+    width: 100, //adjust the width as needed
+    marginBottom: 20, //margin between the logo and the form
+  },
+  
 });
