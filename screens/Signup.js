@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, TextInput, Pressable } from 'react-native'
 import { useState, useEffect, useContext } from 'react'
 import { AuthContext } from '../contexts/AuthContext'
 import { useNavigation } from '@react-navigation/native'
+import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
+import { db } from '../config/Config';
 
 import { ErrorMessage } from '../components/ErrorMessage'
 
@@ -17,11 +19,34 @@ export function Signup( props ) {
   const navigation = useNavigation()
   const Auth = useContext(AuthContext)
 
-  useEffect( () => {
-    if( Auth.currentUser ) {
-      navigation.reset( { index: 0, routes: [ {name: "Home"} ] })
+  useEffect(() => {
+    if (Auth.currentUser) {
+      //create an artist document with the User ID as the document ID
+      const artistDocRef = doc(db, 'artists', Auth.currentUser.uid);
+      console.log('User ID:', Auth.currentUser.uid); // Log the User ID
+
+      //check if the artist document already exists
+      getDoc(artistDocRef)
+        .then((artistDocSnapshot) => {
+          if (!artistDocSnapshot.exists()) {
+            //if it doesnt exist, create the artist document
+            addDoc(artistDocRef, { name: Auth.currentUser.displayName })
+              .then(() => {
+                console.log('Artist document created');
+              })
+              .catch((error) => {
+                console.error('Error creating artist document:', error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error('Error checking artist document:', error);
+        });
+
+      //redirect to home screen
+      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     }
-  })
+  }, [Auth.currentUser]);
 
   // check the value of email
   useEffect( () => {
