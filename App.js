@@ -21,6 +21,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Signup } from './screens/Signup'
 import { Signin } from './screens/Signin'
 import { Home } from './screens/Home'
+import { Upload } from './screens/Upload'
+import { Browse } from './screens/Browse'
+import { Edit } from './screens/Edit'
+import { Profile } from './screens/Profile'
 
 const Stack = createNativeStackNavigator()
 
@@ -42,6 +46,8 @@ export default function App() {
       setAuth(null)
     }
   })
+
+
 
   const Register = (email, password) => {
     return new Promise((resolve, reject) => {
