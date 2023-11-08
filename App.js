@@ -70,12 +70,28 @@ export default function App() {
       <DbContext.Provider value={FBdb}>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="Sign up">
-              {(props) => <Signup handler={Register} />}
-            </Stack.Screen>
-            <Stack.Screen name="Sign in">
-              {(props) => <Signin handler={Login} />}
-            </Stack.Screen>
+          <Stack.Screen
+  name="Sign up"
+  options={{
+    title: 'Sign up',
+    headerStyle: {
+      backgroundColor: '#E5EDD5',
+    },
+  }}
+>
+  {(props) => <Signup handler={Register} />}
+</Stack.Screen>
+<Stack.Screen
+  name="Sign in"
+  options={{
+    title: 'Sign in',
+    headerStyle: {
+      backgroundColor: '#E5EDD5', 
+    },
+  }}
+>
+  {(props) => <Signin handler={Login} />}
+</Stack.Screen>
             <Stack.Screen name="Home" options={{ headerShown: false }}>
               {(props) => <Home />}
             </Stack.Screen>
