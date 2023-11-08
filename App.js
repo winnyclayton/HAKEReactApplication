@@ -23,7 +23,6 @@ import { Signin } from './screens/Signin'
 import { Home } from './screens/Home'
 import { Upload } from './screens/Upload'
 import { Browse } from './screens/Browse'
-import { Edit } from './screens/Edit'
 import { Profile } from './screens/Profile'
 
 const Stack = createNativeStackNavigator()
