@@ -4,14 +4,10 @@ import { AuthContext } from '../contexts/AuthContext';
 import { DbContext } from '../contexts/DbContext';
 import {
   collectionGroup,
-  doc,
-  getDoc,
   getDocs,
   query,
-  where,
-  deleteDoc,
-  documentId,
 } from 'firebase/firestore';
+import { Linking } from 'react-native';
 
 export function Browse(props) {
   const [user, setUser] = useState();
@@ -21,20 +17,16 @@ export function Browse(props) {
   const db = useContext(DbContext);
 
   useEffect(() => {
-    console.log('Auth.currentUser:', Auth.currentUser);
     if (Auth.currentUser) {
       setUser(Auth.currentUser);
     } else {
       setUser(null);
     }
   }, [Auth]);
-  
 
   useEffect(() => {
-    console.log('user:', user);
     if (user) {
-      //fetch data from the artworkList collection for all users
-      console.log('Querying data...');
+      // Fetch data from the artworkList collection for all users
       const q = query(collectionGroup(db, 'artworkList'));
 
       getDocs(q)
@@ -49,9 +41,17 @@ export function Browse(props) {
         .catch((error) => {
           console.error('Error fetching data:', error);
         });
-       
     }
   }, [user, db]);
+
+  const handleEnquire = (recipientEmail) => {
+    // Construct the mailto link with the recipient's email
+    const mailtoLink = `mailto:${recipientEmail}`;
+  
+    // Open the user's email client
+    Linking.openURL(mailtoLink).catch((err) => console.error('Error opening email client:', err));
+  };
+  
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: '#FDF9EE' }]}>
@@ -70,14 +70,12 @@ export function Browse(props) {
               <Text>Price: {item.price}</Text>
             </View>
             <View style={styles.buttonContainer}>
-              <Pressable
-                style={[styles.button, { backgroundColor: '#DAF6B2', width: 100, borderColor: 'black', borderWidth: 0.5 }]}
-                onPress={() => {
-                  setSelectedItem(item); //set the selected item for editing
-                }}
-              >
-                <Text style={{ color: 'black' }}>Enquire</Text>
-              </Pressable>
+            <Pressable
+  style={[styles.button, { backgroundColor: '#DAF6B2', width: 100, borderColor: 'black', borderWidth: 0.5 }]}
+  onPress={() => handleEnquire(item.email)}
+>
+  <Text style={{ color: 'black' }}>Enquire</Text>
+</Pressable>
             </View>
           </View>
         )}
@@ -100,6 +98,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     justifyContent: 'center', 
+    padding: 10,
   },
   image: {
     width: 200,
@@ -114,9 +113,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 6,
     marginVertical: 5,
-    alignItems: 'center', //center the button content horizontally
-    borderWidth: 2, // add black border
+    alignItems: 'center',
+    borderWidth: 2,
   },
 });
-
-
