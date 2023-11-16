@@ -5,10 +5,9 @@ import { DbContext } from '../contexts/DbContext';
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   query,
-  where,
+  setDoc,
   deleteDoc,
 } from 'firebase/firestore';
 
@@ -25,6 +24,9 @@ export function Data(props) {
   const [title, setTitle] = useState('');
   const [year, setYear] = useState('');
   const [price, setPrice] = useState('');
+  const [originalItem, setOriginalItem] = useState(null); // to store the original data for comparison
+  const [editedItem, setEditedItem] = useState(null); // to store the edited data
+
 
   const [editModalVisible, setEditModalVisible] = useState(false); //state to control the edit modal visibility
   const [selectedItem, setSelectedItem] = useState(null);
@@ -44,7 +46,6 @@ const deleteItem = async (itemId) => {
     console.error('Error deleting item:', error);
   }
 };
-
   
   useEffect(() => {
     if (Auth.currentUser) {
@@ -65,9 +66,11 @@ const deleteItem = async (itemId) => {
           const artworks = [];
           querySnapshot.forEach((doc) => {
             const artworkData = doc.data();
-            artworks.push({ id: doc.id, ...artworkData });
+            artworks.push({ id: doc.id, image: doc.name, ...artworkData });
           });
           setData(artworks);
+          setOriginalItem(artworks);
+          setEditedItem(artworks.length > 0 ? artworks[0] : null); // initialize with the first item
         })
         .catch((error) => {
           console.error('Error fetching data:', error);
@@ -96,6 +99,7 @@ const deleteItem = async (itemId) => {
                 style={[styles.button, { backgroundColor: '#DAF6B2', width: 100, borderColor: 'black', borderWidth: 0.5 }]}
                 onPress={() => {
                   setSelectedItem(item); //set the selected item for editing
+                  setEditedItem({ ...item }); //set editedItem to the selected item 
                   setEditModalVisible(true); //open the edit modal
                 }}
               >
@@ -112,7 +116,7 @@ const deleteItem = async (itemId) => {
         )}
       />
 
- {/* Edit Modal */}
+ {/* edit modal */}
  <Modal
   animationType="slide"
   transparent={true}
@@ -124,38 +128,38 @@ const deleteItem = async (itemId) => {
       <View style={styles.formContainer}>
         <Text>Artist:</Text>
         <TextInput
-          style={styles.inputField}
-          onChangeText={(text) => setArtist(text)}
-          value={selectedItem ? selectedItem.artist : artist}
-        />
+  style={styles.inputField}
+  onChangeText={(text) => setEditedItem((prevItem) => ({ ...prevItem, artist: text }))}
+  value={editedItem ? editedItem.artist : ''}
+/>
         <Text>Title:</Text>
         <TextInput
-          style={styles.inputField}
-          onChangeText={(text) => setTitle(text)}
-          value={selectedItem ? selectedItem.title : title}
-        />
+         style={styles.inputField}
+         onChangeText={(text) => setEditedItem((prevItem) => ({ ...prevItem, title: text }))}
+         value={editedItem ? editedItem.title : ''}
+       />
         <Text>Materials:</Text>
         <TextInput
-          style={styles.inputField}
-          onChangeText={(text) => setMaterials(text)}
-          value={selectedItem ? selectedItem.materials : materials}
-        />
+  style={styles.inputField}
+  onChangeText={(text) => setEditedItem((prevItem) => ({ ...prevItem, materials: text }))}
+  value={editedItem ? editedItem.materials : ''}
+/>
         <Text>Year:</Text>
         <TextInput
-          style={styles.inputField}
-          onChangeText={(text) => setYear(text)}
-          value={selectedItem ? selectedItem.year : year}
-        />
+  style={styles.inputField}
+  onChangeText={(text) => setEditedItem((prevItem) => ({ ...prevItem, year: text }))}
+  value={editedItem ? editedItem.year : ''}
+/>
         <Text>Price:</Text>
         <TextInput
-          style={styles.inputField}
-          onChangeText={(text) => setPrice(text)}
-          value={selectedItem ? selectedItem.price : price}
-        />
+  style={styles.inputField}
+  onChangeText={(text) => setEditedItem((prevItem) => ({ ...prevItem, price: text }))}
+  value={editedItem ? editedItem.price : ''}
+/>
       </View>
       <View style={styles.imageNameContainer}>
-        <Text style={styles.imageNameText}>Image Name: image2045.jpeg</Text>
-      </View>
+  <Text style={styles.imageNameText}>Image Name: {selectedItem ? selectedItem.image : ''}</Text>
+</View>
       <View style={styles.buttonGroup}>
         <Pressable
           style={styles.changeImageButton}
@@ -163,20 +167,43 @@ const deleteItem = async (itemId) => {
         >
           <Text style={styles.changeImageButtonText}>Change Image</Text>
         </Pressable>
-        <Pressable
-          style={styles.deleteImageButton}
-          onPress={() => setEditModalVisible(false)}
-        >
-          <Text style={styles.deleteImageButtonText}>Delete Image</Text>
-        </Pressable>
       </View>
       <View style={styles.buttonGroup}>
-        <Pressable
-          style={styles.saveChangesButton}
-          onPress={() => setEditModalVisible(false)}
-        >
-          <Text style={styles.saveChangesButtonText}>Save Changes</Text>
-        </Pressable>
+
+
+      <Pressable
+  style={styles.saveChangesButton}
+  onPress={async () => {
+    try {
+      const collectionRef = collection(
+        db,
+        'artists',
+        user.uid,
+        'artworkList'
+      );
+      const docRef = doc(collectionRef, selectedItem.id);
+
+      // Update the edited data in Firebase
+      await setDoc(docRef, editedItem, { merge: true });
+
+      // Update the state to reflect the changes
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id === selectedItem.id ? { ...item, ...editedItem } : item
+        )
+      );
+
+      // Close the edit modal
+      setEditModalVisible(false);
+    } catch (error) {
+      console.error('Error updating item:', error);
+    }
+  }}
+>
+  <Text style={styles.saveChangesButtonText}>Save Changes</Text>
+</Pressable>
+
+
         <Pressable
           style={styles.closeButton}
           onPress={() => setEditModalVisible(false)}
@@ -205,6 +232,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1, //take up the remaining available space
     justifyContent: 'center', //center content vertically
+    padding: 10,
   },
   image: {
     width: 200, //set image width to 200px
@@ -254,23 +282,26 @@ const styles = StyleSheet.create({
   },
   saveChangesButton: {
     padding: 10,
-    backgroundColor: 'gray',
+    backgroundColor: '#396C4D',
     borderRadius: 6,
     marginTop: 10,
   },
   changeImageButton: {
     padding: 10,
-    backgroundColor: 'gray',
-    borderRadius: 6,
-    marginTop: 10,
-  },
-  deleteImageButton: {
-    padding: 10,
-    backgroundColor: 'gray',
+    backgroundColor: '#DAF6B2',
     borderRadius: 6,
     marginTop: 10,
   },
   closeButtonText: {
     color: 'white',
+  },
+  saveChangesButtonText: {
+    color: 'white'
+  },
+  inputField: {
+    backgroundColor: 'white',
+    padding: 5,
+    marginTop: 5,
+    marginBottom: 5,
   },
 });
