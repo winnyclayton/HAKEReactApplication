@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#396C4D', 
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 10,
   },
   title: {
     fontSize: 20,
