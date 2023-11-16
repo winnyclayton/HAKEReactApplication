@@ -133,6 +133,7 @@ export function Upload(props) {
     } else {
       alert('Failed to get the selected image. Please try again.');
     }
+    
   };
   
 
@@ -187,7 +188,7 @@ export function Upload(props) {
           <Text>Price:</Text>
           <TextInput
             style={styles.inputField}
-            placeholder="Enter artwork price"
+            placeholder="$0,000.00"
             onChangeText={(text) => setPrice(text)}
             value={price}
           />
