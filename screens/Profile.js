@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   deleteaccButton: {
     marginVertical: 5,
     padding: 8,
-    backgroundColor: 'red',
+    backgroundColor: 'black',
     borderRadius: 6,
   },
   buttonText: {
