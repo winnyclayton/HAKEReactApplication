@@ -9,6 +9,7 @@ export function Signup(props) {
 
   const [validEmail, setValidEmail] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
+  const [signupError, setSignupError] = useState(null);
 
   const Auth = useContext(AuthContext);
   const navigation = useNavigation();
@@ -38,16 +39,29 @@ export function Signup(props) {
   const submitHandler = () => {
     props.handler(email, password)
       .then((user) => {
-        //sign up successful
+        // sign up successful
+        setSignupError(null); // Clear any previous error message
       })
       .catch((error) => {
         console.log(error.code);
+        // Handle the specific error for "auth/email-already-in-use"
+        if (error.code === 'auth/email-already-in-use') {
+          setSignupError('You have already signed up. Please go to the sign-in page.');
+        } else {
+          setSignupError('An error occurred during sign up. Please try again.');
+        }
       });
-    //reset the fields
+    // reset the fields
     setEmail('');
     setPassword('');
   };
 
+
+  {signupError && (
+    <Text style={styles.errorMessage}>
+      {signupError}
+    </Text>
+  )}
   return (
     <View style={styles.container}>
 
@@ -55,8 +69,6 @@ export function Signup(props) {
   source={require('../assets/HAKElogo.png')} 
   style={styles.logo}
 />
-
-
       <View style={styles.form}>
         <Text style={styles.title}>Register for an account</Text>
         <Text style={styles.emailText}>Email</Text>
@@ -82,11 +94,16 @@ export function Signup(props) {
           <Text style={styles.buttonText}>Sign up</Text>
         </Pressable>
         <Pressable style={styles.authlink} onPress={() => navigation.navigate('Sign in')}>
-          <Text style={styles.authlinkText}>Go to sign in</Text>
-        </Pressable>
-      </View>
+        <Text style={styles.authlinkText}>Go to sign in</Text>
+      </Pressable>
+      {signupError && (
+        <Text style={styles.errorMessage}>
+          {signupError}
+        </Text>
+      )}
     </View>
-  );
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -147,4 +164,9 @@ const styles = StyleSheet.create({
     width: 100, //adjust the width as needed
     marginBottom: 20, //margin between the logo and the form
   },
+  errorMessage: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
+  }
 });

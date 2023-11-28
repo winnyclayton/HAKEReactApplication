@@ -45,12 +45,15 @@ export function Upload(props) {
       return;
     }
   
+    const userEmail = user.email; //get the user's email address
+
     const artworkData = {
       artist: artist,
       materials: materials,
       title: title,
       year: year,
       price: price,
+      email: userEmail,
     };
   
     // Upload the image to Firebase Storage

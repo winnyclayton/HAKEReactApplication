@@ -58,7 +58,7 @@ export function Home( props ) {
   const ProfileOptions = {
     tabBarLabel: "Profile",
     tabBarIcon: ({ color }) => <IonIcons name="person" color={color} size={20} />,
-    title: email,
+    title: "Your Profile",
     headerStyle: {
       backgroundColor: '#E5EDD5', //header background colour
     },
