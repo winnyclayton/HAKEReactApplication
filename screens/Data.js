@@ -46,15 +46,15 @@ export function Data(props) {
   //function to delete an item
 const deleteItem = async (itemId) => {
   try {
-    // Delete the item in Firebase
+    //delete the item in Firebase
     const collectionRef = collection(db, "artists", user.uid, "artworkList");
     const docRef = doc(collectionRef, itemId);
     await deleteDoc(docRef);
 
-    // Update the state to remove the deleted item
+    //update the state to remove the deleted item
     setData((prevData) => prevData.filter((item) => item.id !== itemId));
 
-    // Close the delete modal
+    //close delete modal
     setDeleteModalVisible(false);
   } catch (error) {
     console.error("Error deleting item:", error);
@@ -222,10 +222,10 @@ const deleteItem = async (itemId) => {
                     );
                     const docRef = doc(collectionRef, selectedItem.id);
 
-                    // Update the edited data in Firebase
+                    //update the edited data in Firebase
                     await setDoc(docRef, editedItem, { merge: true });
 
-                    // Update the state to reflect the changes
+                    //update the state to reflect the changes
                     setData((prevData) =>
                       prevData.map((item) =>
                         item.id === selectedItem.id
@@ -234,7 +234,7 @@ const deleteItem = async (itemId) => {
                       )
                     );
 
-                    // Close the edit modal
+                    //close the edit modal
                     setEditModalVisible(false);
                   } catch (error) {
                     console.error("Error updating item:", error);
@@ -377,24 +377,24 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: "#DAF6B2",
-    width: 75, // Set width to 50% of the original
-    height: 30, // Set height to a fixed value
+    width: 75, 
+    height: 30, 
     borderColor: "black",
     borderWidth: 0.5,
     borderRadius: 6,
-    alignItems: "center", // Center horizontally
-    justifyContent: "center", // Center vertically
+    alignItems: "center",
+    justifyContent: "center", 
     marginBottom: 5,
   },
   deleteButton: {
     backgroundColor: "#396C4D",
-    width: 75, // Set width to 50% of the original
-    height: 30, // Set height to a fixed value
+    width: 75, 
+    height: 30, 
     borderColor: "black",
     borderWidth: 0.5,
     borderRadius: 6,
-    alignItems: "center", // Center horizontally
-    justifyContent: "center", // Center vertically
+    alignItems: "center", 
+    justifyContent: "center", 
   },
   modalContainer: {
     flex: 1,

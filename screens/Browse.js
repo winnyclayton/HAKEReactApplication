@@ -36,7 +36,7 @@ export function Browse(props) {
 
   useEffect(() => {
     if (user) {
-      // Fetch data from the artworkList collection for all users
+      //fetch data from the artworkList collection for all users
       const q = query(collectionGroup(db, "artworkList"));
 
       getDocs(q)
@@ -57,10 +57,10 @@ export function Browse(props) {
   //handle the enquiry button
   const handleEnquire = (recipientEmail) => {
     if (recipientEmail) {
-      // Construct the mailto link with the recipient's email
+      //construct the mailto link with the recipient's email
       const mailtoLink = `mailto:${recipientEmail}`;
 
-      // Open the user's email client
+      //ppen the users email client
       Linking.openURL(mailtoLink).catch((err) =>
         console.error("Error opening email client:", err)
       );
@@ -69,13 +69,13 @@ export function Browse(props) {
     }
   };
 
-  // Open the modal when an item is pressed
+  // open modal when item is pressed
   const handleItemPress = (item) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
 
-  // Close the modal
+  //close modal
   const closeModal = () => {
     setModalVisible(false);
   };
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 10,
-    marginLeft: windowWidth < 600 ? 10 : 0, // Add margin for better spacing on small screens
+    marginLeft: windowWidth < 600 ? 10 : 0,
   },
   row: {
     flexDirection: "row",
@@ -234,11 +234,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "60%",
     height: "60%",
-    flexDirection: "column", // Change to column
+    flexDirection: "column", 
   },
   modalImage: {
-    width: "100%", // Take up the full width
-    height: "70%", // Adjusted to take up 50% of the modal height
+    width: "100%", 
+    height: "70%",
     resizeMode: "contain",
     borderRadius: 10,
   },
@@ -253,19 +253,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   modalTextContainer: {
-    marginTop: 10, // Add some space between the image and text
+    marginTop: 10, 
   },
   modalText: {
     marginBottom: 5,
   },
   enquireButton: {
     backgroundColor: "#DAF6B2",
-    width: 75, // Set width to 50% of the original
-    height: 30, // Set height to a fixed value
+    width: 75, 
+    height: 30, 
     borderColor: "black",
     borderWidth: 0.5,
     borderRadius: 6,
-    alignItems: "center", // Center horizontally
-    justifyContent: "center", // Center vertically
+    alignItems: "center", 
+    justifyContent: "center", 
   },
 });

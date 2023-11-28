@@ -48,11 +48,11 @@ export function Signin(props) {
       .handler(email, password)
       .then((user) => {
         // Sign in successful
-        setSigninError(null); // Clear any previous error message
+        setSigninError(null); //clear any previous error message
       })
       .catch((error) => {
-        console.log(error); // Log the error to the console
-        // Handle the specific errors
+        console.log(error); //log the error to the console
+        //handle the specific errors
         if (error.code === "auth/user-not-found") {
           setSigninError(
             "Account does not exist. Please go to the sign-up page."
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#396C4D", // background colour of the screen
     alignItems: "center",
-    justifyContent: "center", // Ccenter the content vertically
+    justifyContent: "center", // center the content vertically
   },
   title: {
     fontSize: 20,

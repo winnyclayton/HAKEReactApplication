@@ -96,20 +96,20 @@ export function Upload(props) {
         setTextColor('white');
       }, 2000);
   
-      // Show a success alert
+      //show success alert
       Alert.alert('Success', 'Artwork has been uploaded successfully', [
         {
           text: 'OK',
           onPress: () => {
-            // Navigate to the Home screen
-            navigation.navigate('./Home'); // replace 'Home' with the correct screen name
+            //navigate to home
+            navigation.navigate('./Home'); 
           },
         },
       ]);
     } catch (error) {
       console.error('Error uploading image or adding document: ', error);
   
-      // Show an error alert
+      //show an error alert
       Alert.alert('Error', 'Failed to upload artwork. Please try again.');
     }
   };
@@ -141,7 +141,6 @@ export function Upload(props) {
   
 
   const handleDeleteImage = () => {
-    // Add logic to delete the image
     setImageUri(null);
     setImageName('');
   };
